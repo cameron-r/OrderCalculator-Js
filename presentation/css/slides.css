@@ -1,0 +1,65 @@
+html {
+    font-size: 1.5em;
+}
+
+h1 {
+    margin: 0.1em;
+    font-size: 5em;
+}
+
+h2 {
+    margin: 0.1em;
+    font-size: 3em;
+}
+
+
+.slide-show {
+    margin: auto;
+    width: 70%;
+}
+
+#slides > div {
+    height: 90%;
+    width: 90%;
+    margin-right: 200px;
+}
+
+blockquote {
+    background: #f9f9f9;
+    border-left: 10px solid #ccc;
+    margin: 1.5em 10px;
+    padding: 0.5em 10px;
+    quotes: "\201C""\201D""\2018""\2019";
+}
+blockquote:before {
+    color: #ccc;
+    content: open-quote;
+    font-size: 4em;
+    line-height: 0.1em;
+    margin-right: 0.25em;
+    vertical-align: -0.4em;
+}
+blockquote p {
+    display: inline;
+}
+blockquote .author {
+    text-align: right;
+}
+
+.big-point {
+    border-left: solid black;
+    padding-left: 0.8em;
+}
+
+section {
+    background-color: #f9f9f9;
+}
+
+footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 1rem;
+    background-color: #efefef;
+}
