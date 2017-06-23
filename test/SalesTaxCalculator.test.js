@@ -1,48 +1,18 @@
-const assert = require('chai').assert;
 const SalesTaxCalculator = require('../app/SalesTaxCalculator');
-const salesTaxCalculator = new SalesTaxCalculator();
+
+jest.mock('../app/ItemService');
+const ItemService = require('../app/ItemService');
+
+jest.mock('../app/ItemService', () => {
+    return jest.fn(() => 42);
+});
 
 describe('SalesTaxCalculator', () => {
-    /*
-     As a client with simple needs
-     I want to be able to add two numbers together
-     So that I don't have to do the math myself
-     */
+    let salesTaxCalculator;
 
-    /*
-     Given I pass two positive numbers to the calculator
-     When I add the two numbers
-     Then it should give a number back
-     And that number should be equal to the sum of the numbers it received
-     */
-    describe('when adding two positive numbers', () => {
-        let result;
-        beforeEach(() => {
-            result = salesTaxCalculator.addTwoNumbers(1, 2);
-        });
-
-        it('should return a number', () => {
-            assert.isNumber(result);
-        });
-        it('should add the numbers it received', () => {
-            assert.strictEqual(3, result);
-        });
+    beforeEach(() => {
+        salesTaxCalculator = new SalesTaxCalculator();
     });
-
-    /*
-     Given I pass letters as input to the calculator
-     When I try adding the inputs together
-     Then it should give "not a number" back
-     */
-
-    describe('when given letters as input', () => {
-        let result = salesTaxCalculator.addTwoNumbers('k', 'j');
-
-        it('should return NaN', () => {
-            assert.isNaN(result);
-        });
-    });
-
 
     /*
      Given I pass books in my list of items
@@ -52,6 +22,19 @@ describe('SalesTaxCalculator', () => {
     describe('Given a list of books', () => {
 
         describe('when I calculate the tax', () => {
+            it('should call ItemService', () => {
+                ItemService.prototype.getItems = jest.mockImplementation(() => {
+                    return [];
+                });
+                const itemService = new ItemService();
+
+                salesTaxCalculator.calculateCostWithTaxFromItemService(itemService);
+                console.log(itemService);
+
+
+
+            });
+
             it('should charge 5% tax on those books', () => {
                 let testBook = {
                     name: "hi world",
@@ -59,7 +42,7 @@ describe('SalesTaxCalculator', () => {
                     cost: 5
                 };
 
-                assert.strictEqual(salesTaxCalculator.calculateCostWithTax([testBook]), 5 * 1.05)
+                expect(salesTaxCalculator.calculateCostWithTax([testBook])).toBeCloseTo(5.25, 0.001);
             })
         });
 
@@ -86,7 +69,7 @@ describe('SalesTaxCalculator', () => {
                     cost: 5,
                 };
 
-                assert.strictEqual(salesTaxCalculator.calculateCostWithTax([pizzapizzapizza, bahnMiBoysBao]), 9)
+                expect(salesTaxCalculator.calculateCostWithTax([pizzapizzapizza, bahnMiBoysBao])).toBe(9)
             })
         })
     });
@@ -104,7 +87,7 @@ describe('SalesTaxCalculator', () => {
                     type: 'vehicle',
                     cost: 100
                 };
-                assert.closeTo(salesTaxCalculator.calculateCostWithTax([bike]), 110, 0.001);
+                expect(salesTaxCalculator.calculateCostWithTax([bike])).toBeCloseTo(110, 0.001);
             })
         })
     });
@@ -131,9 +114,9 @@ describe('SalesTaxCalculator', () => {
                     name: '1984',
                     type: 'book',
                     cost: 20
-                }
+                };
 
-                assert.closeTo(salesTaxCalculator.calculateCostWithTax([plane, oatmeal, book]), 1100026, 0.001);
+                expect(salesTaxCalculator.calculateCostWithTax([plane, oatmeal, book])).toBeCloseTo(1100026, 0.001);
             });
         });
     });

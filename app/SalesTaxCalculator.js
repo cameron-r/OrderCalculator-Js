@@ -1,7 +1,6 @@
+require('./ItemService');
+
 class SalesTaxCalculator {
-    addTwoNumbers(number1, number2) {
-        return number1 + number2;
-    }
 
     calculateCostWithTax(items) {
         let sum = 0;
@@ -15,6 +14,11 @@ class SalesTaxCalculator {
             }
         }
         return sum;
+    }
+
+    calculateCostWithTaxFromItemService(itemService) {
+        let items = itemService.getItems();
+        return this.calculateCostWithTax(items);
     }
 }
 
