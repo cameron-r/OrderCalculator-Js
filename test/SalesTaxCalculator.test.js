@@ -1,17 +1,16 @@
+const sinon = require('sinon');
+
+const ItemService = require('../app/ItemService');
 const SalesTaxCalculator = require('../app/SalesTaxCalculator');
 
-jest.mock('../app/ItemService');
-const ItemService = require('../app/ItemService');
-
-jest.mock('../app/ItemService', () => {
-    return jest.fn(() => 42);
-});
 
 describe('SalesTaxCalculator', () => {
     let salesTaxCalculator;
+    let itemServiceMock;
 
     beforeEach(() => {
         salesTaxCalculator = new SalesTaxCalculator();
+        itemServiceMock = sinon.createStubInstance(ItemService);
     });
 
     /*
@@ -22,17 +21,13 @@ describe('SalesTaxCalculator', () => {
     describe('Given a list of books', () => {
 
         describe('when I calculate the tax', () => {
-            it('should call ItemService', () => {
-                ItemService.prototype.getItems = jest.mockImplementation(() => {
-                    return [];
-                });
-                const itemService = new ItemService();
 
-                salesTaxCalculator.calculateCostWithTaxFromItemService(itemService);
-                console.log(itemService);
+            it('should call ItemService.getItems', () => {
+                itemServiceMock.getItems.returns([]);
 
+                salesTaxCalculator.calculateCostWithTaxFromItemService(itemServiceMock);
 
-
+                expect(itemServiceMock.getItems.calledOnce).toBeTruthy();
             });
 
             it('should charge 5% tax on those books', () => {
@@ -41,8 +36,9 @@ describe('SalesTaxCalculator', () => {
                     type: "book",
                     cost: 5
                 };
+                itemServiceMock.getItems.returns([testBook]);
 
-                expect(salesTaxCalculator.calculateCostWithTax([testBook])).toBeCloseTo(5.25, 0.001);
+                expect(salesTaxCalculator.calculateCostWithTaxFromItemService(itemServiceMock)).toBeCloseTo(5.25, 0.001);
             })
         });
 
@@ -68,8 +64,8 @@ describe('SalesTaxCalculator', () => {
                     type: "food",
                     cost: 5,
                 };
-
-                expect(salesTaxCalculator.calculateCostWithTax([pizzapizzapizza, bahnMiBoysBao])).toBe(9)
+                itemServiceMock.getItems.returns([pizzapizzapizza, bahnMiBoysBao]);
+                expect(salesTaxCalculator.calculateCostWithTaxFromItemService(itemServiceMock)).toBe(9)
             })
         })
     });
@@ -87,7 +83,8 @@ describe('SalesTaxCalculator', () => {
                     type: 'vehicle',
                     cost: 100
                 };
-                expect(salesTaxCalculator.calculateCostWithTax([bike])).toBeCloseTo(110, 0.001);
+                itemServiceMock.getItems.returns([bike]);
+                expect(salesTaxCalculator.calculateCostWithTaxFromItemService(itemServiceMock)).toBeCloseTo(110, 0.001);
             })
         })
     });
@@ -115,9 +112,22 @@ describe('SalesTaxCalculator', () => {
                     type: 'book',
                     cost: 20
                 };
-
-                expect(salesTaxCalculator.calculateCostWithTax([plane, oatmeal, book])).toBeCloseTo(1100026, 0.001);
+                itemServiceMock.getItems.returns([plane, oatmeal, book]);
+                expect(salesTaxCalculator.calculateCostWithTaxFromItemService(itemServiceMock)).toBeCloseTo(1100026, 0.001);
             });
         });
+    });
+    describe('Given an invalid cost', () => {
+        describe('when I calculate the tax', () => {
+            it('should return NaN', () => {
+                let plane = {
+                    name: 'boeing-747',
+                    type: 'vehicle',
+                    cost: {}
+                };
+                itemServiceMock.getItems.returns([plane]);
+                expect(salesTaxCalculator.calculateCostWithTaxFromItemService(itemServiceMock)).toThrow();
+            });
+        })
     });
 });

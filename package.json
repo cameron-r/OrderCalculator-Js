@@ -1,7 +1,9 @@
 {
   "name": "CodingKata",
   "jest": {
+    "verbose": true,
     "notify": true,
+    "testEnvironment": "node",
     "setupFiles": [
       "./setupJest.js"
     ]
@@ -28,7 +30,9 @@
     "isomorphic-fetch": "^2.2.1",
     "jest": "^20.0.4",
     "jest-fetch-mock": "^1.1.1",
+    "mock-require": "^2.0.2",
     "node-fetch": "^1.7.1",
+    "proxyquire": "^1.8.0",
     "request": "^2.81.0",
     "whatwg-fetch": "^2.0.3"
   }
